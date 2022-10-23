@@ -1,6 +1,6 @@
 /*
 Author: chankruze (chankruze@gmail.com)
-Created: Sun Oct 23 2022 06:02:33 GMT+0530 (India Standard Time)
+Created: Sun Oct 23 2022 11:02:50 GMT+0530 (India Standard Time)
 
 Copyright (c) geekofia 2022 and beyond
 */
@@ -8,7 +8,7 @@ Copyright (c) geekofia 2022 and beyond
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { getAllUsers } from "~/controllers/user.controller";
+import { getAllUsers } from "~/controllers/user.server";
 
 type LoaderData = {
   users: Awaited<ReturnType<typeof getAllUsers> | []>;
@@ -22,6 +22,8 @@ export const loader: LoaderFunction = async ({ params }) => {
 
 export default function Users() {
   const { users } = useLoaderData() as LoaderData;
+
+  console.log(users);
 
   return (
     <div className="p-4">

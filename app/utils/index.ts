@@ -12,13 +12,7 @@ export const isActiveRoute = (pathname: string, route: string): boolean => {
 
   // if the pathname contains the route name
   // i.e. pathname --> http://localhost/customers/new, route --> /customers
-  if (
-    pathname
-      .split("/")
-      .filter((i) => i !== "")
-      .includes(route.slice(1))
-  )
-    return true;
+  // TODO
 
   return false;
 };

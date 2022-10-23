@@ -19,13 +19,13 @@ export type NavLinkType = {
 export const navLinks: NavLinkType[] = [
   {
     label: "Dashboard",
-    href: "/",
+    href: "/admin",
     icon: RiDashboardLine,
     roles: [Roles.ADMIN, Roles.MANAGER],
   },
   {
     label: "Users",
-    href: "/users",
+    href: "/admin/users",
     icon: RiGroupLine,
     roles: [Roles.ADMIN, Roles.MANAGER],
   },

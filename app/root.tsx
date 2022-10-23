@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import {
   Links,
@@ -12,9 +12,6 @@ import {
 import NProgress from "nprogress";
 import nProgressStyles from "nprogress/nprogress.css";
 import styles from "~/styles/app.css";
-import { navLinks } from "~/config";
-import { NavBar } from "~/components/navbar";
-import { SideBar } from "~/components/sidebar";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -34,8 +31,6 @@ NProgress.configure({ showSpinner: false });
 
 export default function App() {
   const transition = useTransition();
-  const [isSideBarFolded, setIsSideBarFolded] = useState(false);
-  const [isSideBarCollapsed, setIsSideBarCollapsed] = useState(false);
 
   useEffect(() => {
     // when the state is idle then we can to complete the progress bar
@@ -52,26 +47,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        {/* the main layout */}
-        <div className="h-screen w-full flex flex-col bg-gray-50 dark:bg-gray-900 overflow-hidden select-none">
-          <NavBar
-            navLinks={navLinks}
-            isSideBarCollapsed={isSideBarCollapsed}
-            collapseSideBar={setIsSideBarCollapsed}
-          />
-          <div className="flex flex-1 overflow-hidden">
-            {!isSideBarCollapsed && (
-              <SideBar
-                navLinks={navLinks}
-                isFolded={isSideBarFolded}
-                toggleFold={setIsSideBarFolded}
-              />
-            )}
-            <main className="relative flex-1 overflow-auto">
-              <Outlet />
-            </main>
-          </div>
-        </div>
+        <Outlet />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
@@ -79,23 +55,3 @@ export default function App() {
     </html>
   );
 }
-
-// export function CatchBoundary() {
-//   const caught = useCatch();
-
-//   return (
-//     <html>
-//       <head>
-//         <title>Oops!</title>
-//         <Meta />
-//         <Links />
-//       </head>
-//       <body>
-//         <h1>
-//           {caught.status} {caught.statusText}
-//         </h1>
-//         <Scripts />
-//       </body>
-//     </html>
-//   );
-// }

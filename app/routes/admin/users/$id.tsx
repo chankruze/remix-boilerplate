@@ -8,7 +8,7 @@ Copyright (c) geekofia 2022 and beyond
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { getUserById } from "~/controllers/user.controller";
+import { getUserById } from "~/controllers/user.server";
 
 type LoaderData = {
   user: Awaited<ReturnType<typeof getUserById>>;
