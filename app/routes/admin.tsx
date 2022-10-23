@@ -6,22 +6,16 @@ Copyright (c) geekofia 2022 and beyond
 */
 
 import type { LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import { countAllUsers } from "~/controllers/user.server";
 import { useState } from "react";
 import { NavBar } from "~/components/navbar";
 import { SideBar } from "~/components/sidebar";
 import { navLinks } from "~/config";
+import { requireUserId } from "~/utils/auth.server";
 
-type LoaderData = {
-  usersCount: Awaited<ReturnType<typeof countAllUsers>>;
-};
-
-export const loader: LoaderFunction = async () => {
-  return json<LoaderData>({
-    usersCount: await countAllUsers(),
-  });
+export const loader: LoaderFunction = async ({ request }) => {
+  await requireUserId(request, "/auth/login");
+  return null;
 };
 
 export default function Admin() {

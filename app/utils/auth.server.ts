@@ -5,10 +5,10 @@ Created: Sun Oct 23 2022 15:39:04 GMT+0530 (India Standard Time)
 Copyright (c) geekofia 2022 and beyond
 */
 
-import { createCookieSessionStorage, json, redirect } from "@remix-run/node";
 import type { LoginForm, RegisterForm } from "./types.server";
 import bcrypt from "bcrypt";
-import { createUser } from "~/controllers/user.server";
+import { createCookieSessionStorage, json, redirect } from "@remix-run/node";
+import { createUser, getUserById } from "~/controllers/user.server";
 
 const sessionSecret = process.env.SESSION_SECRET;
 
@@ -109,3 +109,56 @@ export const createUserSession = async (userId: string, redirectTo: string) => {
     },
   });
 };
+
+// get the user session from the cookie header
+const getUserSession = (request: Request) => {
+  return storage.getSession(request.headers.get("Cookie"));
+};
+
+// get the user id from local storage
+const getUserId = async (request: Request) => {
+  const session = await getUserSession(request);
+  const userId = session.get("userId");
+  if (!userId || typeof userId !== "string") return null;
+  return userId;
+};
+
+// check for userId
+export async function requireUserId(
+  request: Request,
+  redirectTo: string = new URL(request.url).pathname
+) {
+  const userId = await getUserId(request);
+
+  if (!userId) {
+    const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
+    throw redirect(`${redirectTo}?${searchParams}`);
+  }
+  return userId;
+}
+
+// get the user data from db
+export async function getUser(request: Request) {
+  const userId = await getUserId(request);
+  // if no userId found return null
+  if (!userId) return null;
+
+  try {
+    // get the user data from db
+    const user = await getUserById(userId);
+    return user;
+  } catch (error) {
+    // if error happens logout
+    throw logout(request);
+  }
+}
+
+// logout function to clear the session cookie
+export async function logout(request: Request) {
+  const session = await getUserSession(request);
+  return redirect("/auth/login", {
+    headers: {
+      "Set-Cookie": await storage.destroySession(session),
+    },
+  });
+}

@@ -10,7 +10,11 @@ import prisma from "~/lib/prisma.server";
 import bcrypt from "bcrypt";
 
 export const getAllUsers = async () => {
-  return await prisma.user.findMany();
+  return await prisma.user.findMany({
+    select: {
+      password: false,
+    },
+  });
 };
 
 export const countAllUsers = async () => {
@@ -21,6 +25,11 @@ export const getUserById = async (id: string) => {
   const user = await prisma.user.findUnique({
     where: {
       id,
+    },
+    select: {
+      id: true,
+      email: true,
+      profile: true,
     },
   });
 

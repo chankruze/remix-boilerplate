@@ -5,21 +5,26 @@ Created: Sun Oct 23 2022 10:54:58 GMT+0530 (India Standard Time)
 Copyright (c) geekofia 2022 and beyond
 */
 
-import type { ActionFunction } from "@remix-run/node";
 import type { ChangeEvent } from "react";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, useActionData, useTransition } from "@remix-run/react";
 import { useState } from "react";
 import { FormField } from "~/components/form/FormField";
 import { FormSubmit } from "~/components/form/FormSubmit";
 import { validateForm } from "~/utils/form.server";
-import { login } from "~/utils/auth.server";
+import { getUser, login } from "~/utils/auth.server";
 import * as Yup from "yup";
 
 const schema = Yup.object({
   email: Yup.string().email("Not a valid email").required("Email is required"),
   password: Yup.string().required("Password is required"),
 });
+
+export const loader: LoaderFunction = async ({ request }) => {
+  return (await getUser(request)) ? redirect("/admin") : null;
+};
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
