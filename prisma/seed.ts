@@ -10,41 +10,30 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const userData: Prisma.UserCreateInput[] = [
-  {
-    email: "john.doe@mes.com",
-    password: "$2a$12$M.DPr3ktx3YTA1//byp9ieo.nr.cYsh7hGdt38T/5y5DaKLP6dhDu", // 123
-    role: "admin",
-  },
-  {
-    email: "jane.doe@mes.com",
-    password: "$2a$12$M.DPr3ktx3YTA1//byp9ieo.nr.cYsh7hGdt38T/5y5DaKLP6dhDu", // 123
-    role: "user",
-  },
-];
+const admin: Prisma.UserCreateInput = {
+  email: "admin@geekofia.io",
+  password: "$2a$12$SMjX2n1ao/KedFEUwXNgeev2/czrawD3jJuf5vp/M.Hp3Rwm4UgsG", // admin
+  role: "admin",
+};
 
 async function main() {
-  // cleanup the db
+  // remove the adimin user if exists
   await prisma.user
-    .deleteMany({
+    .delete({
       where: {
-        email: {
-          in: userData.map((u) => u.email),
-        },
+        email: admin.email,
       },
     })
     .catch(() => {
-      console.log(`user(s) doesn't exist`);
+      console.log(`admin doesn't exist`);
     });
 
-  // enter the user data
-  for (const user of userData) {
-    const result = await prisma.user.create({
-      data: user,
-    });
+  // create the admin user
+  const result = await prisma.user.create({
+    data: admin,
+  });
 
-    console.log(result);
-  }
+  console.log(result);
 }
 
 main()
