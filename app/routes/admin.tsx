@@ -11,11 +11,10 @@ import { useState } from "react";
 import { NavBar } from "~/components/navbar";
 import { SideBar } from "~/components/sidebar";
 import { navLinks } from "~/config";
-import { requireUserId } from "~/utils/auth.server";
+import { requireRole } from "~/utils/auth.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  await requireUserId(request, "/auth/login");
-  return null;
+  return await requireRole(request, ["admin"]);
 };
 
 export default function Admin() {

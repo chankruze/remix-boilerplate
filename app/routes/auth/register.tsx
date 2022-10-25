@@ -32,7 +32,7 @@ export const action: ActionFunction = async ({ request }) => {
     const result = await validateForm(formData, schema);
     // if all valid, trigger registration function
     // if it's a success, redirect the user based on role
-    return register(result);
+    return register({ ...result, role: "user" });
   } catch (errors) {
     // return error to render in the components
     return json({ errors }, { status: 400 });

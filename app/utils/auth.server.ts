@@ -124,20 +124,39 @@ const getUserId = async (request: Request) => {
 };
 
 // check for userId
-export async function requireUserId(
+export async function requireRole(
   request: Request,
+  roles: string[],
   redirectTo: string = new URL(request.url).pathname
 ) {
+  const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
   const userId = await getUserId(request);
 
   if (!userId) {
-    const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
-    throw redirect(`${redirectTo}?${searchParams}`);
+    throw redirect(`/auth/login?${searchParams}`);
   }
-  return userId;
+
+  try {
+    // get the user data from db
+    const user = await getUserById(userId);
+    // if user found
+    if (user) {
+      if (roles.includes(user.role)) {
+        return user;
+      }
+
+      return redirect(`/auth/login?${searchParams}`);
+    }
+
+    return redirect(`/auth/login?${searchParams}`);
+  } catch (error) {
+    console.log(error);
+    // if error happens logout
+    throw logout(request);
+  }
 }
 
-// get the user data from db
+// // get the user data from db
 export async function getUser(request: Request) {
   const userId = await getUserId(request);
   // if no userId found return null

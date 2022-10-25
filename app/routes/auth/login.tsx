@@ -23,7 +23,9 @@ const schema = Yup.object({
 });
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return (await getUser(request)) ? redirect("/admin") : null;
+  const user = await getUser(request);
+  if (user) return redirect(user.role === "admin" ? "/admin" : "/");
+  return null;
 };
 
 export const action: ActionFunction = async ({ request }) => {
