@@ -16,17 +16,17 @@ const admin: Prisma.UserCreateInput = {
   role: "admin",
 };
 
-async function main() {
+const main = async () => {
   // remove the adimin user if exists
-  await prisma.user
-    .delete({
-      where: {
-        email: admin.email,
-      },
-    })
-    .catch(() => {
-      console.log(`admin doesn't exist`);
-    });
+  const count = await prisma.user.delete({
+    where: {
+      email: admin.email,
+    },
+  });
+
+  if (!count) {
+    console.log(`admin doesn't exist`);
+  }
 
   // create the admin user
   const result = await prisma.user.create({
@@ -34,7 +34,7 @@ async function main() {
   });
 
   console.log(result);
-}
+};
 
 main()
   .catch((e) => {
