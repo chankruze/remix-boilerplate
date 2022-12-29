@@ -141,7 +141,7 @@ export async function requireRole(
     const user = await getUserById(userId);
     // if user found
     if (user) {
-      if (roles.includes(user.role)) {
+      if (roles.includes(user.role as string)) {
         return user;
       }
 
